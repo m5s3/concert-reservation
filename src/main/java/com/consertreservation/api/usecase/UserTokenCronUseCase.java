@@ -29,7 +29,7 @@ public class UserTokenCronUseCase {
         }
         log.info("updateWaitToSuccess");
         List<UserTokenDto> userTokens = userTokenComponent.getWaitOfUserTokens(countOfUpdatedUserToken);
-        userTokenComponent.updateUserTokensStatus(userTokens, TokenStatus.WAIT);
+        userTokenComponent.updateUserTokensStatus(userTokens, TokenStatus.SUCCESS);
     }
 
     @Scheduled(cron = "${schedule.userToken.expire.cron}")
