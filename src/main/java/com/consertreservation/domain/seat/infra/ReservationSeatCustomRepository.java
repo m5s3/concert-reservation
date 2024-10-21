@@ -22,7 +22,7 @@ public class ReservationSeatCustomRepository implements ReservationSeatReadRepos
     public boolean isReservedSeat(Long seatId, Long userId) {
         return queryFactory.from(reservationSeat)
                 .where(reservationSeat.userId.eq(userId))
-                .where(reservationSeat.seatId.eq(userId))
+                .where(reservationSeat.seatId.eq(seatId))
                 .where(reservationSeat.status.ne(ReservationSeatStatus.CANCELLED))
                 .fetchFirst() != null;
     }
