@@ -48,7 +48,7 @@ public class UserTokenReaderCustomRepository implements UserTokenReaderRepositor
     public List<UserToken> getSuccessOfUserTokensLimited(int count) {
         return queryFactory.selectFrom(userToken)
                 .where(userToken.status.eq(TokenStatus.SUCCESS))
-                .where(userToken.updatedAt.before(LocalDateTime.now().minusMinutes(5)))
+                .where(userToken.updatedAt.before(LocalDateTime.now().minusMinutes(30)))
                 .orderBy(userToken.updatedAt.asc())
                 .limit(count)
                 .fetch();
