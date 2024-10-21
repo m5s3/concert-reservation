@@ -1,7 +1,7 @@
 package com.consertreservation.domain.concert.components;
 
 import com.consertreservation.domain.concert.components.dto.ConcertScheduleDto;
-import com.consertreservation.domain.concert.infra.ConcertScheduleScheduleCustomRepository;
+import com.consertreservation.domain.concert.infra.ConcertScheduleCustomRepository;
 import com.consertreservation.domain.concert.model.ConcertSchedule;
 import com.consertreservation.domain.concert.repository.ConcertScheduleStoreRepository;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ConcertScheduleComponent {
 
-    private final ConcertScheduleScheduleCustomRepository concertScheduleCustomRepository;
+    private final ConcertScheduleCustomRepository concertScheduleCustomRepository;
     private final ConcertScheduleStoreRepository concertScheduleStoreRepository;
 
     public void validateAvailableReservation(long concertId, LocalDateTime date) {

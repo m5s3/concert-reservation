@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class ConcertScheduleScheduleCustomRepository implements ConcertScheduleReaderRepository {
+public class ConcertScheduleCustomRepository implements ConcertScheduleReaderRepository {
 
     private final JPQLQueryFactory queryFactory;
 
