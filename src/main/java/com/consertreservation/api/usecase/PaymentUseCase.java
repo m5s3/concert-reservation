@@ -23,7 +23,6 @@ public class PaymentUseCase {
 
     public PaymentDto pay(long userId, long seatId, long amount) {
         seatComponent.validateFee(seatId, amount);
-        seatComponent.reserve(seatId);
         reservationSeatComponent.completeReservation(seatId, userId);
         userComponent.spendFee(userId, amount);
         userTokenComponent.expireUserToken(userId);
