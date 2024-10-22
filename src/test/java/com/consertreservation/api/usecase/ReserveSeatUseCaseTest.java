@@ -14,6 +14,7 @@ import com.consertreservation.domain.concert.repository.ConcertScheduleStoreRepo
 import com.consertreservation.domain.concert.repository.ConcertStoreRepository;
 import com.consertreservation.domain.seat.model.Seat;
 import com.consertreservation.domain.seat.repository.SeatStoreRepository;
+import com.consertreservation.domain.seat.usecase.ReserveSeatUseCase;
 import com.consertreservation.domain.user.model.User;
 import com.consertreservation.domain.user.repositories.UserStoreRepository;
 import com.consertreservation.domain.usertoken.exception.UserTokenException;
@@ -22,7 +23,6 @@ import com.consertreservation.domain.usertoken.model.UserToken;
 import com.consertreservation.domain.usertoken.respositories.UserTokenStoreRepository;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,9 +73,9 @@ class ReserveSeatUseCaseTest {
                 .concertScheduleId(newConcertSchedule.getId())
                 .build();
         Seat newSeat = seatStoreRepository.save(seat);
-        
+
         // When & Then
-        assertThatThrownBy(() -> reserveSeatUseCase.reserveSeat(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now()))
+        assertThatThrownBy(() -> reserveSeatUseCase.execute(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now()))
                 .isInstanceOf(UserTokenException.class)
                 .hasFieldOrPropertyWithValue("errorCode", UNAUTHORIZED);
     }
@@ -103,7 +103,7 @@ class ReserveSeatUseCaseTest {
         Seat newSeat = seatStoreRepository.save(seat);
 
         // When & Then
-        assertThatThrownBy(() -> reserveSeatUseCase.reserveSeat(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now()))
+        assertThatThrownBy(() -> reserveSeatUseCase.execute(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now()))
                 .isInstanceOf(ConcertScheduleException.class)
                 .hasFieldOrPropertyWithValue("errorCode", INVALID_RESERVATION_DATE);
     }
@@ -131,7 +131,7 @@ class ReserveSeatUseCaseTest {
         Seat newSeat = seatStoreRepository.save(seat);
 
         // When & Then
-        assertThatThrownBy(() -> reserveSeatUseCase.reserveSeat(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now()))
+        assertThatThrownBy(() -> reserveSeatUseCase.execute(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now()))
                 .isInstanceOf(ConcertScheduleException.class)
                 .hasFieldOrPropertyWithValue("errorCode", INVALID_RESERVATION_DATE);
     }
@@ -159,7 +159,7 @@ class ReserveSeatUseCaseTest {
         Seat newSeat = seatStoreRepository.save(seat);
 
         // When & Then
-        assertThatThrownBy(() -> reserveSeatUseCase.reserveSeat(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now()))
+        assertThatThrownBy(() -> reserveSeatUseCase.execute(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now()))
                 .isInstanceOf(ConcertScheduleException.class)
                 .hasFieldOrPropertyWithValue("errorCode", FULL_RESERVATION_SEAT);
     }
@@ -188,7 +188,7 @@ class ReserveSeatUseCaseTest {
         Seat newSeat = seatStoreRepository.save(seat);
 
         // When
-        reserveSeatUseCase.reserveSeat(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now());
+        reserveSeatUseCase.execute(newSeat.getId(), user.getId(), newConcert.getId(), LocalDateTime.now());
 
         // Then
         ConcertSchedule findConcertSchedule = concertScheduleReaderRepository.getConcertSchedule(newConcert.getId());
