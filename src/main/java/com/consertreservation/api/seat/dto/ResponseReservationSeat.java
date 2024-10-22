@@ -11,6 +11,6 @@ public record ResponseReservationSeat(
 
     public static ResponseReservationSeat fromResultReserveSeatServiceDto(ResultReserveSeatServiceDto reservationSeatDto) {
         return new ResponseReservationSeat(reservationSeatDto.id(),
-                reservationSeatDto.seatId(), reservationSeatDto.userId(), reservationSeatDto.status().name());
+                reservationSeatDto.seatId(), reservationSeatDto.userId(), reservationSeatDto.status());
     }
 }

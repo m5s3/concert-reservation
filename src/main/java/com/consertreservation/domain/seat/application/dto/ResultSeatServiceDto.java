@@ -3,10 +3,11 @@ package com.consertreservation.domain.seat.application.dto;
 import lombok.Builder;
 
 @Builder
-public record ResultReserveSeatServiceDto(
+public record ResultSeatServiceDto(
         Long id,
-        Long userId,
-        Long seatId,
+        Long concertScheduleId,
+        int seatNumber,
+        long fee,
         String status
 ) {
 }

@@ -3,7 +3,6 @@ package com.consertreservation.api.seat;
 import com.consertreservation.api.seat.dto.RequestReservationSeat;
 import com.consertreservation.api.seat.dto.ResponseSeatDto;
 import com.consertreservation.api.seat.dto.ResponseReservationSeat;
-import com.consertreservation.api.usecase.SeatUserCase;
 import com.consertreservation.domain.seat.application.SeatService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SeatController {
 
-    private final SeatUserCase seatUserCase;
     private final SeatService seatService;
 
     @GetMapping
     public ResponseEntity<List<ResponseSeatDto>> showSeatsByConcertSchedule(@RequestParam("user_id") Long userId,
             @RequestParam("concert_schedule_id") Long concertScheduleId) {
         return ResponseEntity.ok().body(
-                seatUserCase.getAvailableSeats(userId, concertScheduleId)
+                seatService.getAvailableSeats(userId, concertScheduleId)
                         .stream()
-                        .map(ResponseSeatDto::from)
+                        .map(ResponseSeatDto::fromResultSeatServiceDto)
                         .toList()
         );
     }

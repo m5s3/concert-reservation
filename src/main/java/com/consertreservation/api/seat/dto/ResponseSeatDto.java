@@ -1,6 +1,6 @@
 package com.consertreservation.api.seat.dto;
 
-import com.consertreservation.domain.seat.components.dto.SeatDto;
+import com.consertreservation.domain.seat.application.dto.ResultSeatServiceDto;
 
 public record ResponseSeatDto(
         Long id,
@@ -8,7 +8,7 @@ public record ResponseSeatDto(
         long fee
 ) {
 
-    public static ResponseSeatDto from(SeatDto seat) {
+    public static ResponseSeatDto fromResultSeatServiceDto(ResultSeatServiceDto seat) {
         return new ResponseSeatDto(seat.id(), seat.seatNumber(), seat.fee());
     }
 }
