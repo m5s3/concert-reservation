@@ -1,6 +1,6 @@
 package com.consertreservation.api.concert.dto;
 
-import com.consertreservation.domain.concert.components.dto.ConcertWithScheduleDto;
+import com.consertreservation.domain.concert.application.dto.ResultServiceDto;
 import java.time.LocalDateTime;
 
 public record ResponseConcert(
@@ -14,12 +14,12 @@ public record ResponseConcert(
         int remainOfReservationOfSeat
 ) {
 
-    public static ResponseConcert from(ConcertWithScheduleDto concertWithSchedule) {
-        return new ResponseConcert(concertWithSchedule.concertId(), concertWithSchedule.title(),
-                concertWithSchedule.concertScheduleId(),
-                concertWithSchedule.reservationStartDate(), concertWithSchedule.concertStartDate(),
-                concertWithSchedule.concertEndDate(),
-                concertWithSchedule.reservationSeat(),
-                concertWithSchedule.remainOfReservationOfSeat());
+    public static ResponseConcert from(ResultServiceDto result) {
+        return new ResponseConcert(result.concertId(), result.title(),
+                result.concertScheduleId(),
+                result.reservationStartDate(), result.concertStartDate(),
+                result.concertEndDate(),
+                result.reservationSeat(),
+                result.remainOfReservationOfSeat());
     }
 }

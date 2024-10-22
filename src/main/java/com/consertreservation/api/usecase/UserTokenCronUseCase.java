@@ -29,6 +29,9 @@ public class UserTokenCronUseCase {
         }
         log.info("updateWaitToSuccess");
         List<UserTokenDto> userTokens = userTokenComponent.getWaitOfUserTokens(countOfUpdatedUserToken);
+        for (UserTokenDto userToken : userTokens) {
+            log.info("userToken={}", userToken);
+        }
         userTokenComponent.updateUserTokensStatus(userTokens, TokenStatus.SUCCESS);
     }
 

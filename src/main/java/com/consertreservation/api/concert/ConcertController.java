@@ -2,7 +2,7 @@ package com.consertreservation.api.concert;
 
 import com.consertreservation.api.concert.dto.CreateRequestConcertDto;
 import com.consertreservation.api.concert.dto.ResponseConcert;
-import com.consertreservation.api.usecase.ConcertUseCase;
+import com.consertreservation.domain.concert.application.ConcertService;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ConcertController {
 
-    private final ConcertUseCase concertUseCase;
+    private final ConcertService concertService;
 
     @PostMapping
     public ResponseEntity<ResponseConcert> createConcert(@RequestBody CreateRequestConcertDto request) {
-        return ResponseEntity.ok().body(ResponseConcert.from(concertUseCase.createConcert(
+        return ResponseEntity.ok().body(ResponseConcert.from(concertService.createConcert(
                 request.title(),
                 request.reservationStateDate(),
                 request.concertStartDate(),
@@ -33,10 +33,10 @@ public class ConcertController {
     }
 
     @GetMapping("/date")
-    public ResponseEntity<List<ResponseConcert>> getConcerts(@RequestParam("user_id") Long userId, @RequestParam("date") LocalDateTime dateTime) {
+    public ResponseEntity<List<ResponseConcert>> getConcerts(@RequestParam("user_id") Long userId,
+            @RequestParam("date") LocalDateTime dateTime) {
         return ResponseEntity.ok().body(
-                concertUseCase
-                        .searchConcertByDate(userId, dateTime)
+                concertService.searchConcertByDate(userId, dateTime)
                         .stream()
                         .map(ResponseConcert::from)
                         .toList()

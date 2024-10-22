@@ -1,4 +1,13 @@
 package com.consertreservation.domain.concert.usecase;
 
-public class CreateConcertUseCase {
+import com.consertreservation.domain.concert.usecase.dto.ResultConcertUseCaseDto;
+import java.time.LocalDateTime;
+
+public interface CreateConcertUseCase {
+
+    ResultConcertUseCaseDto execute(String title,
+            LocalDateTime reservationStateDate,
+            LocalDateTime concertStartDate,
+            LocalDateTime concertEndDate,
+            int reservationSeat);
 }
