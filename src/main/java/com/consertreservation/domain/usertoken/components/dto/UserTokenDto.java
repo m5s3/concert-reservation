@@ -7,19 +7,19 @@ import java.util.UUID;
 public record UserTokenDto(
         UUID id,
         long userId,
-        TokenStatus tokenStatus,
+        String tokenStatus,
         int waitingOrder
 ) {
 
     public static UserTokenDto from(UserToken userToken) {
-        return new UserTokenDto(userToken.getId(), userToken.getUserId(), userToken.getStatus(), userToken.getWaitingOrder());
+        return new UserTokenDto(userToken.getId(), userToken.getUserId(), userToken.getStatus().name(), userToken.getWaitingOrder());
     }
 
     public static UserToken toEntity(UserTokenDto dto) {
         return UserToken.builder()
                 .id(dto.id)
                 .userid(dto.userId)
-                .status(dto.tokenStatus)
+                .status(TokenStatus.find(dto.tokenStatus))
                 .build();
     }
 }

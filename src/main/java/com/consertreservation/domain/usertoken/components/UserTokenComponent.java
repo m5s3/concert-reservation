@@ -74,10 +74,9 @@ public class UserTokenComponent {
                 .toList();
     }
 
-    public void updateUserTokensStatus(List<UserTokenDto> userTokenDtos, TokenStatus tokenStatus) {
-        List<UUID> ids = userTokenDtos.stream().map(UserTokenDto::id).toList();
+    public void updateUserTokensStatus(List<UUID> ids, String status) {
         List<UserToken> userTokens = userTokenReaderRepository.getUserTokens(ids);
-        userTokens.forEach(userToken -> userToken.changeStatus(tokenStatus));
+        userTokens.forEach(userToken -> userToken.changeStatus(TokenStatus.find(status)));
     }
 
     public void expireUserToken(long userId) {

@@ -2,6 +2,8 @@ package com.consertreservation.api.usecase;
 
 import static org.assertj.core.api.Assertions.*;
 
+import com.consertreservation.domain.usertoken.application.UserTokenService;
+import com.consertreservation.domain.usertoken.application.dto.ResultUserTokenServiceDto;
 import com.consertreservation.domain.usertoken.components.dto.UserTokenDto;
 import com.consertreservation.domain.usertoken.model.UserToken;
 import com.consertreservation.domain.usertoken.respositories.UserTokenReaderRepository;
@@ -14,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class UserTokenUseCaseTest {
 
     @Autowired
-    UserTokenUseCase userTokenUseCase;
+    UserTokenService userTokenService;
 
     @Autowired
     UserTokenReaderRepository userTokenReaderRepository;
@@ -23,7 +25,7 @@ class UserTokenUseCaseTest {
     @DisplayName("유저 토큰 발행")
     void get_userToken() {
         // When
-        UserTokenDto userToken = userTokenUseCase.getUserToken(1L);
+        ResultUserTokenServiceDto userToken = userTokenService.getUserToken(1L);
 
         // Then
         UserToken findUserToken = userTokenReaderRepository.getUserToken(userToken.userId()).get();

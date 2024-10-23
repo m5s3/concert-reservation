@@ -1,6 +1,6 @@
 package com.consertreservation.api.usertoken.dto;
 
-import com.consertreservation.domain.usertoken.components.dto.UserTokenDto;
+import com.consertreservation.domain.usertoken.application.dto.ResultUserTokenServiceDto;
 import java.util.UUID;
 
 public record ResponseUserToken(
@@ -10,8 +10,8 @@ public record ResponseUserToken(
         int waitingOrder
 ) {
 
-    public static ResponseUserToken fromUserTokenDto(UserTokenDto userTokenDto) {
-        return new ResponseUserToken(userTokenDto.id(), userTokenDto.userId(), userTokenDto.tokenStatus().name(),
+    public static ResponseUserToken fromResultUserTokenServiceDto(ResultUserTokenServiceDto userTokenDto) {
+        return new ResponseUserToken(userTokenDto.id(), userTokenDto.userId(), userTokenDto.tokenStatus(),
                 userTokenDto.waitingOrder());
     }
 }
