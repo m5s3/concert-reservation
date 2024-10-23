@@ -1,14 +1,12 @@
 package com.consertreservation.api.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
+import com.consertreservation.domain.user.application.UserService;
+import com.consertreservation.domain.user.application.dto.ResultChargeServiceDto;
 import com.consertreservation.domain.user.components.dto.UserChargeDto;
-import com.consertreservation.domain.user.infra.UserReaderCustomRepository;
 import com.consertreservation.domain.user.model.User;
 import com.consertreservation.domain.user.repositories.UserStoreRepository;
-import java.util.Optional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 class UserUseCaseTest {
 
     @Autowired
-    UserUseCase userUseCase;
+    UserService userService;
 
     @Autowired
     UserStoreRepository userStoreRepository;
@@ -36,10 +34,10 @@ class UserUseCaseTest {
         long nowCharge = newUser.getCharge();
 
         // When
-        userUseCase.charge(user.getId(), 10000);
+        userService.charge(user.getId(), 10000L);
 
         // Then
-        UserChargeDto charge = userUseCase.getCharge(1L);
+        ResultChargeServiceDto charge = userService.getCharge(1L);
         assertThat(charge.amount()).isEqualTo(nowCharge + 10000);
     }
 }
