@@ -41,14 +41,14 @@ schedule:
   userToken:
     success:
       cron: "* */10 * * * *"
-      active: true
+      active: false
     expire:
       cron: "* */10 * * * *"
-      active: true
+      active: false
   reserveSeat:
     restore:
       cron: "* */5 * * * *"
-      active: true
+      active: false
 
 springdoc:
   swagger-ui:
