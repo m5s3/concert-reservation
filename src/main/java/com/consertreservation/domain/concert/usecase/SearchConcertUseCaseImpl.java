@@ -18,7 +18,6 @@ public class SearchConcertUseCaseImpl implements SearchConcertUseCase {
     private final ConcertComponent concertComponent;
 
     public List<ResultConcertUseCaseDto> execute(Long userId, LocalDateTime dateTime) {
-        userTokenComponent.validateAuthorization(userId);
         return concertComponent.getConcerts(dateTime)
                 .stream().map(concert -> ResultConcertUseCaseDto.of(
                         concert.concertId(),

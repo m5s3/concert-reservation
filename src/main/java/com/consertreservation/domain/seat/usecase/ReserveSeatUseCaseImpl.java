@@ -31,7 +31,6 @@ public class ReserveSeatUseCaseImpl implements ReserveSeatUseCase {
     }
 
     private void validateReserveSeat(Long concertId, Long userId, LocalDateTime reserveDate) {
-        userTokenComponent.validateAuthorization(userId);
         concertScheduleComponent.validateAvailableReservation(concertId, reserveDate);
     }
 }

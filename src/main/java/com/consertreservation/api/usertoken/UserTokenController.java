@@ -2,6 +2,7 @@ package com.consertreservation.api.usertoken;
 
 import com.consertreservation.api.usertoken.dto.ResponseUserToken;
 import com.consertreservation.domain.usertoken.application.UserTokenService;
+import com.consertreservation.domain.usertoken.application.dto.ResultUserTokenServiceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,9 @@ public class UserTokenController {
 
     @GetMapping
     public ResponseEntity<ResponseUserToken> getUserToken(@RequestParam(name = "user_id") Long userId) {
+        ResultUserTokenServiceDto userToken = userTokenService.getUserToken(userId);
         return ResponseEntity.ok()
-                .body(ResponseUserToken.fromResultUserTokenServiceDto(userTokenService.getUserToken(userId)));
+                .header("Authorization", String.valueOf(userToken.userId()))
+                .body(ResponseUserToken.fromResultUserTokenServiceDto(userToken));
     }
 }

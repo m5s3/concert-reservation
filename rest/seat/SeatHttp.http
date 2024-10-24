@@ -1,10 +1,11 @@
 ### 좌석 예약
-POST localhost:8080/v1/seat/reservation
+POST localhost:8080/v1/seats/reserve
+Authorization: 3
 Content-Type: application/json
 
 {
-  "seatId": 1,
-  "userId": 2,
+  "seatId": 50,
+  "userId": 3,
   "concertId": 1,
   "reservationDate": "2024-10-17 00:00:00"
 }

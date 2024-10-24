@@ -17,7 +17,6 @@ public class GetAvailableSeatsUseCaseImpl implements GetAvailableSeatsUseCase{
 
     @Override
     public List<ResultSeatUseCaseDto> execute(Long userId, Long concertScheduleId) {
-        userTokenComponent.validateAuthorization(userId);
         List<SeatDto> seats = seatComponent.getAvailableSeats(concertScheduleId);
         return seats.stream()
                 .map(seat -> ResultSeatUseCaseDto.builder()

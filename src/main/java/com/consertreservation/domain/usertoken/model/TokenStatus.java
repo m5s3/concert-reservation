@@ -11,4 +11,8 @@ public enum TokenStatus {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 토큰 상태는 존재하지 않습니다. " + status));
     }
+
+    public static boolean isSuccess(String status) {
+        return find(status) == TokenStatus.SUCCESS;
+    }
 }

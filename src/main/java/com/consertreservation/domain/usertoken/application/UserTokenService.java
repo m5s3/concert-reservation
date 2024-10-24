@@ -4,6 +4,7 @@ import com.consertreservation.domain.usertoken.application.dto.ResultUserTokenSe
 import com.consertreservation.domain.usertoken.usecase.GetSuccessOfUserTokensUseCase;
 import com.consertreservation.domain.usertoken.usecase.GetUserTokenUseCase;
 import com.consertreservation.domain.usertoken.usecase.GetWaitOfUserTokensUseCase;
+import com.consertreservation.domain.usertoken.usecase.IsAuthorizedUseCase;
 import com.consertreservation.domain.usertoken.usecase.UpdateStatusUseCase;
 import com.consertreservation.domain.usertoken.usecase.dto.ResultUserTokenUseCaseDto;
 import java.util.List;
@@ -21,6 +22,7 @@ public class UserTokenService {
     private final GetSuccessOfUserTokensUseCase getSuccessOfUserTokensUseCase;
     private final GetWaitOfUserTokensUseCase getWaitOfUserTokensUseCase;
     private final GetUserTokenUseCase getUserTokenUseCase;
+    private final IsAuthorizedUseCase isAuthorizedUseCase;
 
     public void updateUserTokensStatus(List<UUID> userTokenIds, String status) {
         updateStatusUseCase.execute(userTokenIds, status);
@@ -60,5 +62,9 @@ public class UserTokenService {
                 .tokenStatus(userToken.tokenStatus())
                 .waitingOrder(userToken.waitingOrder())
                 .build();
+    }
+
+    public boolean isAuthorized(Long userId) {
+        return isAuthorizedUseCase.execute(userId);
     }
 }

@@ -84,12 +84,4 @@ public class UserTokenComponent {
                 .orElseThrow(() -> new UserTokenException(NOT_FOUND, "유저 토큰을 찾을 수 없습니다"));
         userToken.expire();
     }
-
-    @Transactional(readOnly = true)
-    public void validateAuthorization(Long userId) {
-        log.info("userId={}", userId);
-        UserToken userToken = userTokenReaderRepository.getUserToken(userId)
-                .orElseThrow(() -> new UserTokenException(NOT_FOUND, "유저 토큰을 찾을 수가 없습니다"));
-        userToken.validateAuthorization();
-    }
 }

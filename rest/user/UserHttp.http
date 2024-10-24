@@ -6,6 +6,6 @@ POST localhost:8080/v1/charge
 Content-Type: application/json
 
 {
-  "userId": 1,
+  "userId": 3,
   "amount": 100000
 }
