@@ -8,8 +8,10 @@ import com.consertreservation.domain.seat.components.SeatComponent;
 import com.consertreservation.domain.user.components.UserComponent;
 import com.consertreservation.domain.usertoken.components.UserTokenComponent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PayPaymentUseCaseImpl implements PayPaymentUseCase {

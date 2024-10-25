@@ -5,7 +5,8 @@ import static com.consertreservation.domain.usertoken.model.QUserToken.userToken
 import com.consertreservation.domain.usertoken.model.TokenStatus;
 import com.consertreservation.domain.usertoken.model.UserToken;
 import com.consertreservation.domain.usertoken.respositories.UserTokenReaderRepository;
-import com.querydsl.jpa.JPQLQueryFactory;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.LockModeType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,13 +18,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserTokenReaderCustomRepository implements UserTokenReaderRepository {
 
-    private final JPQLQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public Optional<UserToken> getUserToken(Long userId) {
         return Optional.ofNullable(queryFactory.selectFrom(userToken)
                 .where(userToken.userId.eq(userId))
                 .orderBy(userToken.createdAt.desc())
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchFirst());
     }
 

@@ -6,6 +6,8 @@ import com.consertreservation.domain.seat.model.ReservationSeat;
 import com.consertreservation.domain.seat.model.ReservationSeatStatus;
 import com.consertreservation.domain.seat.repository.ReservationSeatReadRepository;
 import com.querydsl.jpa.JPQLQueryFactory;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.LockModeType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ReservationSeatCustomRepository implements ReservationSeatReadRepository {
 
-    private final JPQLQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public boolean isReservedSeat(Long seatId, Long userId) {
@@ -32,6 +34,7 @@ public class ReservationSeatCustomRepository implements ReservationSeatReadRepos
         return Optional.ofNullable(queryFactory.selectFrom(reservationSeat)
                 .where(reservationSeat.userId.eq(userId))
                 .where(reservationSeat.seatId.eq(seatId))
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchFirst());
     }
 
