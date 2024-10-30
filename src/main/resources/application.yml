@@ -36,31 +36,38 @@ spring:
       connection-timeout: 300000
       username: sa
       password: 1234
+    p6spy:
+      enable-logging: true
+      multiline: true
+      logging: slf4j
+      tracing:
+        include-parameter-values: true
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
 #          ddl-auto: create-drop
-    show-sql: true
+#    show-sql: true
     properties:
       hibernate:
-        format_sql: true
+#        format_sql: true
     defer-datasource-initialization: true
-logging:
-  level:
-    org:
-      springframework:
-        transaction:
-          interceptor: TRACE
-        jdbc:
-          datasource:
-            DataSourceTransactionManager: DEBUG
-        orm:
-          jpa:
-            JpaTransactionManager: DEBUG
-      hibernate:
-        resource:
-          transaction: DEBUG
-        SQL: DEBUG
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        transaction:
+#          interceptor: TRACE
+#        jdbc:
+#          datasource:
+#            DataSourceTransactionManager: DEBUG
+#        orm:
+#          jpa:
+#            JpaTransactionManager: DEBUG
+#      hibernate:
+#        resource:
+#          transaction: DEBUG
+#        SQL: DEBUG
 
 ---
 schedule:

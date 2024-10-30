@@ -30,6 +30,13 @@ public class ReservationSeatCustomRepository implements ReservationSeatReadRepos
     }
 
     @Override
+    public Optional<ReservationSeat> getReservationSeat(Long seatId) {
+        return Optional.ofNullable(queryFactory.selectFrom(reservationSeat)
+                .where(reservationSeat.seatId.eq(seatId))
+                .fetchFirst());
+    }
+
+    @Override
     public Optional<ReservationSeat> getReservationSeat(Long seatId, Long userId) {
         return Optional.ofNullable(queryFactory.selectFrom(reservationSeat)
                 .where(reservationSeat.userId.eq(userId))
