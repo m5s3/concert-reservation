@@ -1,5 +1,6 @@
 package com.consertreservation.domain.seat.application;
 
+import com.consertreservation.common.aop.annotation.Retry;
 import com.consertreservation.domain.seat.application.dto.ResultReserveSeatServiceDto;
 import com.consertreservation.domain.seat.application.dto.ResultSeatServiceDto;
 import com.consertreservation.domain.seat.usecase.GetAvailableSeatsUseCase;
@@ -10,9 +11,12 @@ import com.consertreservation.domain.seat.usecase.dto.ResultSeatUseCaseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -26,8 +30,11 @@ public class SeatService {
         restoreReservedSeatsUseCase.execute();
     }
 
+    @Retry(maxRetries=5)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResultReserveSeatServiceDto reserveSeat(Long seatId, Long userId, Long concertId, LocalDateTime reserveDate) {
         ResultReserveSeatUseCaseDto reserveSeat = reserveSeatUseCase.execute(seatId, userId, concertId, reserveDate);
+        log.info("user={}", reserveSeat.userId());
         return ResultReserveSeatServiceDto.builder()
                 .id(reserveSeat.id())
                 .seatId(reserveSeat.seatId())

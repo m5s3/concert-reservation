@@ -44,6 +44,9 @@ dependencies {
 
     // REST-Assured
     testImplementation 'io.rest-assured:rest-assured'
+
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework:spring-aspects'
 }
 
 tasks.named('test') {

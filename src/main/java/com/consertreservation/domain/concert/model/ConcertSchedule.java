@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,6 +33,9 @@ public class ConcertSchedule extends BaseTimeEntity {
     private LocalDateTime concertEndDate;
     private int reservationSeat;
     private int remainOfReservationSeat;
+
+    @Version
+    private Long version;
 
     @Builder
     public ConcertSchedule(Long id, Long concertId, LocalDateTime reservationStartDate, LocalDateTime concertStartDate,

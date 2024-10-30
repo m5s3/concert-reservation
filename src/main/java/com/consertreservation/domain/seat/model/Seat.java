@@ -13,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +36,9 @@ public class Seat extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name="status", columnDefinition = "varchar(20)")
     private SeatStatus status;
+
+    @Version
+    private Long version;
 
     @Builder
     public Seat(Long id, Long concertScheduleId, int seatNumber, SeatStatus status, long fee) {

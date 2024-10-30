@@ -12,7 +12,6 @@ import com.consertreservation.domain.payment.application.dto.ResultPaymentServic
 import com.consertreservation.domain.payment.model.Payment;
 import com.consertreservation.domain.payment.repository.PaymentReaderRepository;
 import com.consertreservation.domain.payment.repository.PaymentStoreRepository;
-import com.consertreservation.domain.seat.exception.ReservationSeatException;
 import com.consertreservation.domain.seat.model.ReservationSeat;
 import com.consertreservation.domain.seat.model.ReservationSeatStatus;
 import com.consertreservation.domain.seat.model.Seat;
@@ -22,21 +21,16 @@ import com.consertreservation.domain.seat.repository.SeatStoreRepository;
 import com.consertreservation.domain.user.infra.UserReaderCustomRepository;
 import com.consertreservation.domain.user.model.User;
 import com.consertreservation.domain.user.repositories.UserStoreRepository;
-import com.consertreservation.domain.usertoken.exception.UserTokenException;
 import com.consertreservation.domain.usertoken.model.TokenStatus;
 import com.consertreservation.domain.usertoken.model.UserToken;
 import com.consertreservation.domain.usertoken.respositories.UserTokenStoreRepository;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -127,7 +121,7 @@ class PaymentServiceTest {
         });
         countDownLatch.await();
 
-        User findUser = userReaderCustomRepository.getUser(user.getId()).get();
+        User findUser = userReaderCustomRepository.getUserWithLock(user.getId()).get();
         List<Payment> findPayments = paymentReaderRepository.showPayments(findUser.getId());
 
         assertThat(findUser.getCharge()).isEqualTo(9_000L);

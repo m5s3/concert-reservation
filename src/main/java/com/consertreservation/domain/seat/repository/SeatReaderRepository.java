@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface SeatReaderRepository {
     Seat getSeat(Long id);
+    Seat getSeatWithLock(Long seatId);
     List<Seat> getAvailableSeats(Long concertScheduleId);
     List<Seat> getSeats(List<Long> ids);
 }
