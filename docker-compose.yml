@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   redis:
-    container_name: coupon-redis
+    container_name: concert-reservation-redis
     image: redis:7.2-alpine
     command: redis-server --port 6380
     labels:
