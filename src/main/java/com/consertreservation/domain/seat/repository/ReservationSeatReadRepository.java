@@ -7,5 +7,6 @@ import java.util.Optional;
 public interface ReservationSeatReadRepository {
     boolean isReservedSeat(Long seatId, Long userId);
     Optional<ReservationSeat> getReservationSeat(Long seatId, Long userId);
+    Optional<ReservationSeat> getReservationSeat(Long seatId);
     List<ReservationSeat> getExpiredReservationSeats();
 }
