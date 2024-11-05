@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
-@Transactional
 @RequiredArgsConstructor
 public class ReservationSeatComponent {
 
@@ -31,7 +30,8 @@ public class ReservationSeatComponent {
         if (reservationSeatReadRepository.isReservedSeat(seatId, userId)) {
             throw new ReservationSeatException(ALREADY_IN_SEAT, "이미 예약했습니다");
         }
-        Seat seat = seatReaderRepository.getSeat(seatId);
+        //Seat seat = seatReaderRepository.getSeat(seatId);
+        Seat seat = seatReaderRepository.getSeatWithLock(seatId);
         seat.reserve();
         ReservationSeat reservationSeat = ReservationSeat.builder()
                 .seatId(seatId)

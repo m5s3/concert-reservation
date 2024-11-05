@@ -19,4 +19,9 @@ public class QueryDslConfiguration {
     public JPQLQueryFactory jpqlQueryFactory() {
         return new JPAQueryFactory(entityManager);
     }
+
+    @Bean
+    public JPAQueryFactory jpaAQueryFactory() {
+        return new JPAQueryFactory(entityManager);
+    }
 }

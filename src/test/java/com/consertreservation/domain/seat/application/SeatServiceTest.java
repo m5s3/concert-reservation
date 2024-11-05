@@ -1,22 +1,23 @@
-package com.consertreservation.domain.payment.application;
+package com.consertreservation.domain.seat.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.consertreservation.domain.concert.model.Concert;
 import com.consertreservation.domain.concert.model.ConcertSchedule;
 import com.consertreservation.domain.concert.repository.ConcertScheduleReaderRepository;
 import com.consertreservation.domain.concert.repository.ConcertScheduleStoreRepository;
 import com.consertreservation.domain.concert.repository.ConcertStoreRepository;
-import com.consertreservation.domain.payment.application.dto.ResultPaymentServiceDto;
-import com.consertreservation.domain.payment.model.Payment;
 import com.consertreservation.domain.payment.repository.PaymentReaderRepository;
 import com.consertreservation.domain.payment.repository.PaymentStoreRepository;
+import com.consertreservation.domain.seat.exception.ReservationSeatException;
+import com.consertreservation.domain.seat.exception.SeatException;
+import com.consertreservation.domain.seat.infra.SeatReaderCustomRepository;
 import com.consertreservation.domain.seat.model.ReservationSeat;
-import com.consertreservation.domain.seat.model.ReservationSeatStatus;
 import com.consertreservation.domain.seat.model.Seat;
 import com.consertreservation.domain.seat.model.SeatStatus;
+import com.consertreservation.domain.seat.repository.ReservationSeatReadRepository;
 import com.consertreservation.domain.seat.repository.ReservationSeatStoreRepository;
+import com.consertreservation.domain.seat.repository.SeatReaderRepository;
 import com.consertreservation.domain.seat.repository.SeatStoreRepository;
 import com.consertreservation.domain.user.infra.UserReaderCustomRepository;
 import com.consertreservation.domain.user.model.User;
@@ -24,30 +25,37 @@ import com.consertreservation.domain.user.repositories.UserStoreRepository;
 import com.consertreservation.domain.usertoken.model.TokenStatus;
 import com.consertreservation.domain.usertoken.model.UserToken;
 import com.consertreservation.domain.usertoken.respositories.UserTokenStoreRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.StopWatch;
 
+@ActiveProfiles("test")
 @SpringBootTest
-@Transactional
-class PaymentServiceTest {
+@Rollback(false)
+class SeatServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(PaymentServiceTest.class);
+    private static final Logger log = LoggerFactory.getLogger(SeatServiceTest.class);
+
     @Autowired
-    PaymentService paymentService;
+    SeatService seatService;
     @Autowired
     UserTokenStoreRepository userTokenStoreRepository;
+    @Autowired
+    UserReaderCustomRepository userReaderRepository;
     @Autowired
     ConcertScheduleReaderRepository concertScheduleReaderRepository;
     @Autowired
@@ -67,74 +75,72 @@ class PaymentServiceTest {
     @Autowired
     ReservationSeatStoreRepository reservationSeatStoreRepository;
 
+    @PersistenceContext
+    EntityManager entityManager;
+    @Autowired
+    private ReservationSeatReadRepository reservationSeatReadRepository;
+    @Autowired
+    private SeatReaderRepository seatReaderRepository;
+
     @Test
-    @DisplayName("결제 동시성 테스트")
-    void concurrency_pay_test() throws InterruptedException {
+    @DisplayName("예약 좌석 동시성 테스트")
+    void concurrancy_reserve_seat_test() {
         // Given
         // 유저 및 유저토큰 생성
-        User user = createUserAndUserToken("test" + LocalDateTime.now(), 10_000L, TokenStatus.SUCCESS);
-
+        int countOfTask = 500;
+        log.info("==== 유저 및 유저토큰 생성 시작 ====");
+        for (int i = 0; i < countOfTask; i++) {
+            createUserAndUserToken("test" + i , 10_000L, TokenStatus.SUCCESS);
+        }
         // 콘서트 생성
+        log.info("==== 콘서트 생성 시작 ====");
         Concert newConcert = createConcert("test title");
 
         // 콘서트 스케줄 생성
+        log.info("==== 콘서트 스케쥴 생성 시작 ====");
+        int countOfSeat = 50;
         ConcertSchedule newConcertSchedule = createConcertSchedule(newConcert, LocalDateTime.now().minusDays(3),
-                LocalDateTime.now().minusDays(2), LocalDateTime.now().minusDays(1), 50);
+                LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(3), countOfSeat, countOfSeat);
 
         // 좌석 생성
-        Seat seat = createSeat(newConcertSchedule, 1_000L, SeatStatus.AVAILABLE);
-        
-        // 예약 좌석 생성
-        createReservationSeat(seat, user, ReservationSeatStatus.ING);
+        List<Seat> seats = new ArrayList<>();
+        for (int i = 0; i < countOfSeat; i++) {
+            seats.add(createSeat(newConcertSchedule, 1_000L, SeatStatus.AVAILABLE));
+        }
 
-        // When & Then
-        int numTasks = 5;
-        int numberOfThreads = 5;
-        ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
-//        CountDownLatch latch = new CountDownLatch(numberOfThreads);
-        CountDownLatch countDownLatch = new CountDownLatch(numTasks);
-//        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10,10, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
-        service.submit(() -> {
-            ResultPaymentServiceDto pay = paymentService.pay(user.getId(), seat.getId(), 1_000L);
-            System.out.println("pay=" + pay);
-            countDownLatch.countDown();
-        });
-        service.submit(() -> {
-            ResultPaymentServiceDto pay = paymentService.pay(user.getId(), seat.getId(), 1_000L);
-            System.out.println("pay=" + pay);
-            countDownLatch.countDown();
-        });
-        service.submit(() -> {
-            ResultPaymentServiceDto pay = paymentService.pay(user.getId(), seat.getId(), 1_000L);
-            System.out.println("pay=" + pay);
-            countDownLatch.countDown();
-        });
-        service.submit(() -> {
-            ResultPaymentServiceDto pay = paymentService.pay(user.getId(), seat.getId(), 1_000L);
-            System.out.println("pay=" + pay);
-            countDownLatch.countDown();
-        });
-        service.submit(() -> {
-            ResultPaymentServiceDto pay = paymentService.pay(user.getId(), seat.getId(), 1_000L);
-            System.out.println("pay=" + pay);
-            countDownLatch.countDown();
-        });
-        countDownLatch.await();
+        // When
+        log.info("==== 동시성 테스트 시작 ====");
+        int expectedOfSuccess = 1;
+        int expectedOfFailure = countOfTask - expectedOfSuccess;
+        AtomicInteger success = new AtomicInteger();
+        AtomicInteger failure = new AtomicInteger();
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        for (int i = 0; i < countOfTask; i++) {
+            int index = i;
+            futures.add(CompletableFuture.runAsync(() -> {
+                User user = userReaderRepository.getUserByName("test" + index).get();
+                try {
+                    log.info("user={}", user.getName());
+                    Thread.sleep(100);
+                    seatService.reserveSeat(seats.getFirst().getId(), user.getId(), newConcert.getId(), LocalDateTime.now());
+                    success.getAndIncrement();
+                } catch (ReservationSeatException | SeatException | InterruptedException e) {
+                    failure.getAndIncrement();
+                }
+            }));
+        }
 
-        User findUser = userReaderCustomRepository.getUserWithLock(user.getId()).get();
-        List<Payment> findPayments = paymentReaderRepository.showPayments(findUser.getId());
-
-        assertThat(findUser.getCharge()).isEqualTo(9_000L);
-        assertThat(findPayments.size()).isEqualTo(1);
-    }
-
-    private ReservationSeat createReservationSeat(Seat seat, User user, ReservationSeatStatus reservationSeatStatus) {
-        ReservationSeat reservationSeat = ReservationSeat.builder()
-                .seatId(seat.getId())
-                .userId(user.getId())
-                .status(reservationSeatStatus)
-                .build();
-        return reservationSeatStoreRepository.save(reservationSeat);
+        StopWatch stopWatch = new StopWatch("동시성 테스트");
+        stopWatch.start();
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()])).join();
+        stopWatch.stop();
+        log.info("==== 동시성 테스트 종료 ====");
+        // Then
+        System.out.println(stopWatch.prettyPrint());
+        ConcertSchedule concertSchedule = concertScheduleReaderRepository.getConcertSchedule(newConcert.getId());
+        assertThat(concertSchedule.getRemainOfReservationSeat()).isEqualTo(countOfSeat - 1);
+        assertThat(success.get()).isEqualTo(expectedOfSuccess);
+        assertThat(failure.get()).isEqualTo(expectedOfFailure);
     }
 
     private Seat createSeat(ConcertSchedule newConcertSchedule, long fee, SeatStatus seatStatus) {
@@ -163,12 +169,15 @@ class PaymentServiceTest {
     }
 
     private ConcertSchedule createConcertSchedule(Concert newConcert, LocalDateTime reservationStartDate,
-            LocalDateTime concertStartDate, LocalDateTime concertEndDate, int remainOfReservationSeat) {
+            LocalDateTime concertStartDate, LocalDateTime concertEndDate, int reservationSeat,
+            int remainOfReservationSeat) {
+        log.info("newConcert.getId()={}", newConcert.getId());
         return concertScheduleStoreRepository.save(ConcertSchedule.builder()
                 .concertId(newConcert.getId())
                 .reservationStartDate(reservationStartDate)
                 .concertStartDate(concertStartDate)
                 .concertEndDate(concertEndDate)
+                .reservationSeat(reservationSeat)
                 .remainOfReservationSeat(remainOfReservationSeat)
                 .build());
     }
@@ -178,19 +187,5 @@ class PaymentServiceTest {
                 .title(title)
                 .build();
         return concertStoreRepository.save(concert);
-    }
-
-    static class CallableEx implements Callable<String> {
-        private int idx;
-
-        CallableEx(int idx) {
-            this.idx = idx;
-        }
-
-        @Override
-        public String call() throws Exception {
-
-            return "test";
-        }
     }
 }
