@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class ConcertReservationApplication {
 
+    // test
     public static void main(String[] args) {
         SpringApplication.run(ConcertReservationApplication.class, args);
     }
