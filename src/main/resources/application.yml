@@ -24,51 +24,18 @@ spring:
     activate:
       on-profile: test
   datasource:
-#    url: jdbc:h2:mem:test;MODE=MySQL;DATABASE_TO_LOWER=TRUE;INIT=CREATE SCHEMA IF NOT EXISTS concert_reservation;NON_KEYWORDS=USER
-#    driverClassName: org.h2.Driver
-#    username: sa
-#    password:
-    hikari:
-      jdbc-url: jdbc:mysql://localhost:3306/concert_reservation?useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      maximum-pool-size: 30
-      max-lifetime: 3000000
-      connection-timeout: 300000
-      username: sa
-      password: 1234
-    p6spy:
-      enable-logging: true
-      multiline: true
-      logging: slf4j
-      tracing:
-        include-parameter-values: true
+    url: jdbc:h2:mem:test;MODE=MySQL;DATABASE_TO_LOWER=TRUE;INIT=CREATE SCHEMA IF NOT EXISTS concert_reservation;NON_KEYWORDS=USER
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
   jpa:
     hibernate:
-      ddl-auto: create
-#          ddl-auto: create-drop
-#    show-sql: true
+      ddl-auto: create-drop
+    show-sql: true
     properties:
       hibernate:
-#        format_sql: true
+        format_sql: true
     defer-datasource-initialization: true
-
-#logging:
-#  level:
-#    org:
-#      springframework:
-#        transaction:
-#          interceptor: TRACE
-#        jdbc:
-#          datasource:
-#            DataSourceTransactionManager: DEBUG
-#        orm:
-#          jpa:
-#            JpaTransactionManager: DEBUG
-#      hibernate:
-#        resource:
-#          transaction: DEBUG
-#        SQL: DEBUG
-
 ---
 schedule:
   userToken:

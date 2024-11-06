@@ -18,29 +18,11 @@ public class UserReaderCustomRepository implements UserReaderRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<User> getUserWithLock(Long userId) {
+    public Optional<User> getUser(Long userId) {
         return Optional.ofNullable(
                         queryFactory.selectFrom(user)
                                 .where(user.id.eq(userId))
                                 .setLockMode(LockModeType.PESSIMISTIC_WRITE)
-                        .fetchOne()
-        );
-    }
-
-    @Override
-    public Optional<User> getUser(Long userId) {
-        return Optional.ofNullable(
-                queryFactory.selectFrom(user)
-                        .where(user.id.eq(userId))
-                        .fetchOne()
-        );
-    }
-
-    @Override
-    public Optional<User> getUserByName(String name) {
-        return Optional.ofNullable(
-                queryFactory.selectFrom(user)
-                        .where(user.name.eq(name))
                         .fetchOne()
         );
     }

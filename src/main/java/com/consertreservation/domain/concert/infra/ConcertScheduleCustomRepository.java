@@ -5,8 +5,6 @@ import static com.consertreservation.domain.concert.model.QConcertSchedule.conce
 import com.consertreservation.domain.concert.model.ConcertSchedule;
 import com.consertreservation.domain.concert.repository.ConcertScheduleReaderRepository;
 import com.querydsl.jpa.JPQLQueryFactory;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.LockModeType;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,20 +14,12 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class ConcertScheduleCustomRepository implements ConcertScheduleReaderRepository {
 
-    private final JPAQueryFactory queryFactory;
+    private final JPQLQueryFactory queryFactory;
 
     @Override
     public ConcertSchedule getConcertSchedule(Long concertId) {
         return queryFactory.selectFrom(concertSchedule)
                 .where(concertSchedule.concertId.eq(concertId))
-                .fetchOne();
-    }
-
-    @Override
-    public ConcertSchedule getConcertScheduleWithLock(Long concertId) {
-        return queryFactory.selectFrom(concertSchedule)
-                .where(concertSchedule.concertId.eq(concertId))
-                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .fetchOne();
     }
 

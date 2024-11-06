@@ -7,10 +7,10 @@ import com.consertreservation.domain.concert.repository.ConcertScheduleStoreRepo
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 @RequiredArgsConstructor
 public class ConcertScheduleComponent {
 
@@ -18,14 +18,13 @@ public class ConcertScheduleComponent {
     private final ConcertScheduleStoreRepository concertScheduleStoreRepository;
 
     public void validateAvailableReservation(long concertId, LocalDateTime date) {
-        ConcertSchedule concertSchedule = concertScheduleCustomRepository.getConcertScheduleWithLock(concertId);
+        ConcertSchedule concertSchedule = concertScheduleCustomRepository.getConcertSchedule(concertId);
         ConcertScheduleValidator.validate(concertSchedule);
         concertSchedule.validateAvailable(date);
     }
 
     public void decreaseRemainOfSeat(long concertId) {
-        //ConcertSchedule concertSchedule = concertScheduleCustomRepository.getConcertSchedule(concertId);
-        ConcertSchedule concertSchedule = concertScheduleCustomRepository.getConcertScheduleWithLock(concertId);
+        ConcertSchedule concertSchedule = concertScheduleCustomRepository.getConcertSchedule(concertId);
         concertSchedule.decreaseRemainOfSeat();
     }
 
