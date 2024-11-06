@@ -15,8 +15,13 @@ public class QueryDslConfiguration {
     @PersistenceContext
     private EntityManager entityManager;
 
+//    @Bean
+//    public JPQLQueryFactory jpqlQueryFactory() {
+//        return new JPAQueryFactory(entityManager);
+//    }
+
     @Bean
-    public JPQLQueryFactory jpqlQueryFactory() {
+    public JPAQueryFactory jpaAQueryFactory() {
         return new JPAQueryFactory(entityManager);
     }
 }
