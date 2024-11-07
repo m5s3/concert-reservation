@@ -1,11 +1,8 @@
 package com.consertreservation.domain.usertoken.application;
 
+import com.consertreservation.application.queue.application.QueueService;
 import com.consertreservation.domain.usertoken.application.dto.ResultUserTokenServiceDto;
-import com.consertreservation.domain.usertoken.usecase.GetSuccessOfUserTokensUseCase;
-import com.consertreservation.domain.usertoken.usecase.GetUserTokenUseCase;
-import com.consertreservation.domain.usertoken.usecase.GetWaitOfUserTokensUseCase;
-import com.consertreservation.domain.usertoken.usecase.IsAuthorizedUseCase;
-import com.consertreservation.domain.usertoken.usecase.UpdateStatusUseCase;
+import com.consertreservation.domain.usertoken.usecase.*;
 import com.consertreservation.domain.usertoken.usecase.dto.ResultUserTokenUseCaseDto;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +20,9 @@ public class UserTokenService {
     private final GetWaitOfUserTokensUseCase getWaitOfUserTokensUseCase;
     private final GetUserTokenUseCase getUserTokenUseCase;
     private final IsAuthorizedUseCase isAuthorizedUseCase;
+    private final GetUserTokensUseCase getUserTokensUseCase;
+
+    private final QueueService queueService;
 
     public void updateUserTokensStatus(List<UUID> userTokenIds, String status) {
         updateStatusUseCase.execute(userTokenIds, status);
@@ -56,15 +56,27 @@ public class UserTokenService {
 
     public ResultUserTokenServiceDto getUserToken(Long userId) {
         ResultUserTokenUseCaseDto userToken = getUserTokenUseCase.execute(userId);
+        // 대기열에 추가
+        queueService.addItemToWaitingQueue(userToken.userId());
+
+        // 대기 순서 조회
+        int waitingOrder = queueService.calculateRemainOfWaitingOrder(userId).intValue();
         return ResultUserTokenServiceDto.builder()
                 .id(userToken.id())
                 .userId(userToken.userId())
                 .tokenStatus(userToken.tokenStatus())
-                .waitingOrder(userToken.waitingOrder())
+                .waitingOrder(waitingOrder)
                 .build();
     }
 
     public boolean isAuthorized(Long userId) {
-        return isAuthorizedUseCase.execute(userId);
+        return queueService.isInActiveQueue(userId);
+    }
+
+    public List<ResultUserTokenServiceDto> getUserTokens(List<Long> userIds) {
+        return getUserTokensUseCase.executeUserTokens(userIds)
+                .stream()
+                .map(ResultUserTokenServiceDto::from)
+                .toList();
     }
 }

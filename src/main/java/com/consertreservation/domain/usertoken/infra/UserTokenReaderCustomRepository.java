@@ -62,4 +62,11 @@ public class UserTokenReaderCustomRepository implements UserTokenReaderRepositor
                 .where(userToken.id.in(ids))
                 .fetch();
     }
+
+    @Override
+    public List<UserToken> getUserTokensByUserId(List<Long> userIds) {
+        return queryFactory.selectFrom(userToken)
+                .where(userToken.userId.in(userIds))
+                .fetch();
+    }
 }

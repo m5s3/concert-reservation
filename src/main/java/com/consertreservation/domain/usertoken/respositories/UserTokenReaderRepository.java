@@ -11,4 +11,5 @@ public interface UserTokenReaderRepository {
     List<UserToken> getWaitOfUserTokensLimited(int count);
     List<UserToken> getSuccessOfUserTokensLimited(int count);
     List<UserToken> getUserTokens(List<UUID> id);
+    List<UserToken> getUserTokensByUserId(List<Long> userIds);
 }
