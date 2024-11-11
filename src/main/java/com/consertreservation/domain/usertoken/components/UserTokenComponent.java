@@ -84,4 +84,12 @@ public class UserTokenComponent {
                 .orElseThrow(() -> new UserTokenException(NOT_FOUND, "유저 토큰을 찾을 수 없습니다"));
         userToken.expire();
     }
+
+    @Transactional(readOnly = true)
+    public List<UserTokenDto> getUserTokens(List<Long> userIds) {
+        return userTokenReaderRepository.getUserTokensByUserId(userIds)
+                .stream()
+                .map(UserTokenDto::from)
+                .toList();
+    }
 }
