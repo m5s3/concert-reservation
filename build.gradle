@@ -50,6 +50,10 @@ dependencies {
     implementation 'org.redisson:redisson-spring-boot-starter:3.27.0' // ⭐ Redisson
 }
 
+test {
+    maxHeapSize = "2048m"
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
