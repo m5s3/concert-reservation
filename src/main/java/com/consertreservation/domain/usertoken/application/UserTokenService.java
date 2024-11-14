@@ -21,6 +21,7 @@ public class UserTokenService {
     private final GetUserTokenUseCase getUserTokenUseCase;
     private final IsAuthorizedUseCase isAuthorizedUseCase;
     private final GetUserTokensUseCase getUserTokensUseCase;
+    private final ExpireUserToken expireUserToken;
 
     private final QueueService queueService;
 
@@ -78,5 +79,9 @@ public class UserTokenService {
                 .stream()
                 .map(ResultUserTokenServiceDto::from)
                 .toList();
+    }
+
+    public void expireUserToken(Long userId) {
+        expireUserToken.executeExpireUserToken(userId);
     }
 }
