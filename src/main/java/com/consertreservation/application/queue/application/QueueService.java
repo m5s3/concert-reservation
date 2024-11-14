@@ -1,5 +1,7 @@
 package com.consertreservation.application.queue.application;
 
+import static com.consertreservation.application.queue.constant.QueueConst.COUNT_OF_ACTIVE_USER_TOKEN;
+
 import com.consertreservation.application.redis.RedisService;
 import com.consertreservation.application.queue.application.dto.ResultQueueServiceDto;
 import com.consertreservation.application.queue.constant.QueueConst;
@@ -16,7 +18,6 @@ import java.util.*;
 public class QueueService {
 
     private final RedisService redisService;
-    private final UserTokenService userTokenService;
 
     public void addItemToWaitingQueue(Long userId) {
         redisService.addItemToSortedSet(QueueConst.WAITING_QUEUE, String.valueOf(userId),
@@ -31,16 +32,20 @@ public class QueueService {
         redisService.addItemToHash(QueueConst.ACTIVE_QUEUE, String.valueOf(userId), "1");
     }
 
-    public List<ResultQueueServiceDto> getNextItemsInWaitingQueue(int size) {
+    public List<Long> getNextItemsInWaitingQueue(int size) {
         List<Long> ids = redisService.getItemsInSortedSet(QueueConst.WAITING_QUEUE, 0, size)
                 .stream()
                 .map(userId -> Long.valueOf(String.valueOf(userId)))
                 .toList();
 
-        return userTokenService.getUserTokens(ids)
-                .stream()
-                .map(ResultQueueServiceDto::from)
-                .toList();
+        return ids;
+    }
+
+    public void activeUserToken() {
+        clearActiveQueue();
+        List<Long> userIds = getNextItemsInWaitingQueue(COUNT_OF_ACTIVE_USER_TOKEN);
+        userIds.forEach(this::addItemToActiveQueue);
+        removeItemToWaitingQueue(COUNT_OF_ACTIVE_USER_TOKEN);
     }
 
     public Long calculateRemainOfWaitingOrder(Long userId) {
