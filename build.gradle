@@ -48,6 +48,13 @@ dependencies {
 
     // redis client
     implementation 'org.redisson:redisson-spring-boot-starter:3.27.0' // ⭐ Redisson
+
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:kafka'
 }
 
 test {

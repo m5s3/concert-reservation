@@ -1,7 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: local
   datasource:
     hikari:
       jdbc-url: jdbc:mysql://localhost:3306/concert_reservation?useUnicode=yes&characterEncoding=UTF-8&rewriteBatchedStatements=true
@@ -44,6 +41,14 @@ spring:
     redis:
       host: localhost
       port: 6380
+logging:
+  level:
+    org:
+      springframework:
+        kafka: DEBUG
+
+topic:
+  name: my-topic
 #logging:
 #  level:
 #    org:
@@ -89,3 +94,18 @@ springdoc:
   default-produces-media-type: application/json
   paths-to-match:
     - /**
+spring:
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: consumer-group01
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      ack-mode: manual
+
+topic:
+  name: my-topic

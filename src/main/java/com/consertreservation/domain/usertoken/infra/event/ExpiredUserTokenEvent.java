@@ -1,13 +1,15 @@
 package com.consertreservation.domain.usertoken.infra.event;
 
-import lombok.Getter;
+import lombok.Builder;
 
-@Getter
-public class ExpiredUserTokenEvent {
+@Builder
+public record ExpiredUserTokenEvent(
+        Long userId
+) {
 
-    private final Long userId;
-
-    public ExpiredUserTokenEvent(Long userId) {
-        this.userId = userId;
+    public static ExpiredUserTokenEvent withUserId(Long userId) {
+        return ExpiredUserTokenEvent.builder()
+                .userId(userId)
+                .build();
     }
 }
