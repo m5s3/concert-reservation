@@ -1,5 +1,6 @@
 package com.consertreservation.domain.usertoken.infra;
 
+import com.consertreservation.domain.outbox.components.dto.ResultOutBox;
 import com.consertreservation.domain.usertoken.infra.event.ExpiredUserTokenEvent;
 import com.consertreservation.domain.usertoken.producer.UserTokenPublisher;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,8 +20,8 @@ public class UserTokenKafkaPublisher implements UserTokenPublisher {
     private final KafkaTemplate<String,String> kafkaTemplate;
 
     @Override
-    public void expireUserTokenPublish(ExpiredUserTokenEvent event) {
+    public void expireUserTokenPublish(ResultOutBox event) {
         log.info("Expired UserTokenEvent: {}", event);
-        kafkaTemplate.send(topic, String.valueOf(event.userId()), String.valueOf(event.userId()));
+        kafkaTemplate.send(topic, String.valueOf(event.id()), String.valueOf(event.id()));
     }
 }

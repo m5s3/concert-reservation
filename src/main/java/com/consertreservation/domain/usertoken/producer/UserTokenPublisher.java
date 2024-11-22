@@ -1,8 +1,8 @@
 package com.consertreservation.domain.usertoken.producer;
 
-import com.consertreservation.domain.usertoken.infra.event.ExpiredUserTokenEvent;
+import com.consertreservation.domain.outbox.components.dto.ResultOutBox;
 
 public interface UserTokenPublisher {
 
-    void expireUserTokenPublish(ExpiredUserTokenEvent event);
+    void expireUserTokenPublish(ResultOutBox event);
 }

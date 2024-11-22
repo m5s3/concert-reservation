@@ -35,7 +35,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        format_sql: false
+        format_sql: true
     defer-datasource-initialization: true
   data:
     redis:
@@ -78,6 +78,9 @@ schedule:
     restore:
       cron: "* */5 * * * *"
       active: false
+  outbox:
+    re-publish:
+      cron: "* */10 * * * *"
 
 springdoc:
   swagger-ui:

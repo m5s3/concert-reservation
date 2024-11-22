@@ -7,12 +7,14 @@ import com.consertreservation.application.queue.application.dto.ResultQueueServi
 import com.consertreservation.application.queue.constant.QueueConst;
 import com.consertreservation.domain.usertoken.application.UserTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class QueueService {
@@ -42,8 +44,9 @@ public class QueueService {
     }
 
     public void activeUserToken() {
-        clearActiveQueue();
+//        clearActiveQueue();
         List<Long> userIds = getNextItemsInWaitingQueue(COUNT_OF_ACTIVE_USER_TOKEN);
+        log.info("userIds={}", userIds);
         userIds.forEach(this::addItemToActiveQueue);
         removeItemToWaitingQueue(COUNT_OF_ACTIVE_USER_TOKEN);
     }
