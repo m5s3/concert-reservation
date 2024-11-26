@@ -27,7 +27,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             throws Exception {
         String authorization = request.getHeader("Authorization");
 
-        if (!userTokenService.isAuthorized(Long.valueOf(authorization))) {
+        if (Objects.nonNull(authorization) && !userTokenService.isAuthorized(Long.valueOf(authorization))) {
             buildUnAuthorizedResponse(response);
             return false;
         }
