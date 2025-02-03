@@ -15,7 +15,8 @@
 - SpringBoot
 - Spring data JPA
 - MySQL
-
+- redis
+- kafka
 
 ## Swagger
 ![Swagger](/image/swagger.png)
